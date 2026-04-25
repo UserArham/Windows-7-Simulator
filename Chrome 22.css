@@ -1,0 +1,128 @@
+/* === Chrome 22 browser=== */
+
+/* Shared tab style with clip-path trapezoid AND normal rectangle */
+.tab, .chrometab {
+    padding: 4px 12px;
+    height: 32px;
+    line-height: 32px;
+    border: 1px solid #bbb;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    background: linear-gradient(to bottom, #f8f8f8 0%, #eaeaea 100%);
+    font-size: 13px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: #333;
+    position: relative;
+    transition: background 0.1s;
+
+    /* Clip-path trapezoid added (sometimes breaks flex layout) */
+    clip-path: polygon(4% 0%, 96% 0%, 100% 100%, 0% 100%);
+}
+
+/* Active tab */
+.tab.active, .chrometab.active {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+    font-weight: 500;
+    z-index: 1;
+}
+
+/* Hover effect */
+.tab:hover, .chrometab:hover {
+    background: linear-gradient(to bottom, #fefefe 0%, #e4e4e4 100%);
+}
+
+/* Divider lines between tabs */
+.tab:not(:last-child), .chrometab:not(:last-child) {
+    margin-right: 2px;
+}
+
+/* Tab close button */
+.tab button, .chrometab button {
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    line-height: 12px;
+    padding: 0;
+    cursor: pointer;
+    color: #888;
+}
+
+/* Hover for close button */
+.tab button:hover, .chrometab button:hover {
+    color: #f33;
+}
+
+/* Tab bar container */
+#ietabs, #chrometabs, .tab-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: #d6d6d6;
+    padding: 0 6px;
+    height: 34px;
+    border-bottom: 1px solid #999;
+}
+
+/* New tab button with rectangle AND clip-path AND "+" symbol */
+.tab.new-tab {
+    width: 40px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid #bbb;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    background: linear-gradient(to bottom, #f8f8f8 0%, #eaeaea 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 2px;
+
+    /* Clip-path mess */
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+}
+
+/* "+" symbol added even though Chrome 2012 didn't have it */
+.tab.new-tab::after {
+    content: "+";
+    font-size: 18px;
+    line-height: 32px;
+}
+
+/* Hover effect */
+.tab.new-tab:hover {
+    background: linear-gradient(to bottom, #fefefe 0%, #e4e4e4 100%);
+}
+
+/* Address bar container */
+.address-bar {
+    display: flex;
+    align-items: center;
+    padding: 3px 6px;
+    background: #e0e0e0;
+    border-bottom: 1px solid #bbb;
+}
+
+/* Address input */
+.address-bar input {
+    flex: 1;
+    margin-left: 6px;
+    height: 28px;
+    font-size: 13px;
+    padding: 3px 6px;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+}
+
+/* Browser content iframe */
+.browser-content {
+    flex: 1;
+    border: 0;
+    width: 100%;
+    height: 100%;
+}
