@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows 7 Simulator</title>
+<link rel="stylesheet" href="https://unpkg.com/7.css">
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: url("https://4kwallpapers.com/images/walls/thumbs_3t/13944.jpg") center/cover no-repeat;
+    font-family: "Segoe UI", sans-serif;
+    cursor: url("https://upload.wikimedia.org/wikipedia/commons/e/e9/Windows_Vista_Aero_arrow_32x32-32.png"), auto;
+}
+#desktop { position: absolute; top:0; left:0; right:0; bottom:40px; overflow:hidden; z-index:0; }
+#desktop::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size:20px 20px;
+    pointer-events:none;
+}
+#taskbar {
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:40px;
+    background:rgba(30,30,30,0.85);
+    display:flex;
+    align-items:center;
+    z-index:1000;
+}
+#start-orb {
+    width:40px;
+    height:40px;
+    background:url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/78b5b005-0417-4396-8f67-32fe902c68e5/dqaheo-27476279-79ad-45d0-b87d-32f1c7cd9aa5.png") center/cover;
+    cursor:pointer;
+}
+#taskbar-clock {
+    margin-left: auto;
+    margin-right: 8px;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 14px;
+    color: white;
+    cursor: default;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+}
+#taskbar-menu {
+    position:absolute;
+    bottom:40px;
+    right:8px;
+    display:none;
+    flex-direction:column;
+    gap:4px;
+    z-index:1500;
+}
+#taskbar-menu button {
+    all: unset;
+    display: block;
+    padding: 6px 12px;
+    font-family: "Segoe UI";
+    cursor: pointer;
+}
+#taskbar-menu button:hover { background: rgba(0,120,215,0.25); }
+#start-menu { position:fixed; bottom:40px; left:0; width:260px; display:none; z-index:1200; }
+#start-menu .window-body { padding:0; }
+.menu { list-style:none; margin:0; padding:4px; }
+.menu-item { padding:6px 10px; cursor:pointer; }
+.menu-item:hover { background:rgba(0,120,215,0.25); }
+.window { min-width:320px; min-height:220px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.3); z-index:500; position:absolute; background:#fff; border-radius:4px; }
+.window-body { padding:12px; height: calc(100% - 32px); box-sizing:border-box; overflow:auto; }
+.title-bar-controls button:hover { filter: brightness(1.2); cursor:pointer; }
+.palette { display:grid; grid-template-columns:repeat(8,16px); gap:3px; padding:4px; }
+.color { width:16px; height:16px; cursor:pointer; }
+.ms { display:grid; grid-template-columns:repeat(10,24px); }
+.cell { width:24px; height:24px; background:#ccc; border:1px solid #999; text-align:center; line-height:24px; user-select:none; cursor:pointer; }
+#shutdown-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:black; z-index:9999; }
+/* === Chrome 22 browser=== */
+
+/* Shared tab style with clip-path trapezoid AND normal rectangle */
+.tab, .chrometab {
+    padding: 4px 12px;
+    height: 32px;
+    line-height: 32px;
+    border: 1px solid #bbb;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    background: linear-gradient(to bottom, #f8f8f8 0%, #eaeaea 100%);
+    font-size: 13px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: #333;
+    position: relative;
+    transition: background 0.1s;
+
+    /* Clip-path trapezoid added (sometimes breaks flex layout) */
+    clip-path: polygon(4% 0%, 96% 0%, 100% 100%, 0% 100%);
+}
+
+/* Active tab */
+.tab.active, .chrometab.active {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+    font-weight: 500;
+    z-index: 1;
+}
+
+/* Hover effect */
+.tab:hover, .chrometab:hover {
+    background: linear-gradient(to bottom, #fefefe 0%, #e4e4e4 100%);
+}
+
+/* Divider lines between tabs */
+.tab:not(:last-child), .chrometab:not(:last-child) {
+    margin-right: 2px;
+}
+
+/* Tab close button */
+.tab button, .chrometab button {
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    line-height: 12px;
+    padding: 0;
+    cursor: pointer;
+    color: #888;
+}
+
+/* Hover for close button */
+.tab button:hover, .chrometab button:hover {
+    color: #f33;
+}
+
+/* Tab bar container */
+#ietabs, #chrometabs, .tab-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: #d6d6d6;
+    padding: 0 6px;
+    height: 34px;
+    border-bottom: 1px solid #999;
+}
+
+/* New tab button with rectangle AND clip-path AND "+" symbol */
+.tab.new-tab {
+    width: 40px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid #bbb;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    background: linear-gradient(to bottom, #f8f8f8 0%, #eaeaea 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 2px;
+
+    /* Clip-path mess */
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+}
+
+/* "+" symbol added even though Chrome 2012 didn't have it */
+.tab.new-tab::after {
+    content: "+";
+    font-size: 18px;
+    line-height: 32px;
+}
+
+/* Hover effect */
+.tab.new-tab:hover {
+    background: linear-gradient(to bottom, #fefefe 0%, #e4e4e4 100%);
+}
+
+/* Address bar container */
+.address-bar {
+    display: flex;
+    align-items: center;
+    padding: 3px 6px;
+    background: #e0e0e0;
+    border-bottom: 1px solid #bbb;
+}
+
+/* Address input */
+.address-bar input {
+    flex: 1;
+    margin-left: 6px;
+    height: 28px;
+    font-size: 13px;
+    padding: 3px 6px;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+}
+
+/* Browser content iframe */
+.browser-content {
+    flex: 1;
+    border: 0;
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+<div id="desktop"></div>
+
+<!-- START MENU -->
+<div id="start-menu" class="window">
+  <div class="window-body">
+    <div style="display:flex;align-items:center;padding:6px;">
+      <img id="user-icon" src="https://www.rw-designer.com/icon-image/22554-256x256x8.png" alt="User" width="32" height="32" style="margin-right:8px;">
+      <span>Administrator</span>
+    </div>
+    <menu class="menu">
+      <li class="menu-item" onclick="openApp('ie')" style="display:flex; align-items:center;">
+        <img src="https://img.apponic.com/113/198/0d27a46dc4aabe1b3c4a90fb05883e04.png" alt="IE" width="16" height="16" style="margin-right:6px;">
+        Internet Explorer
+      </li>
+      <li class="menu-item" onclick="openApp('chrome')" style="display:flex; align-items:center;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Google_Chrome_icon_%28March_2011%29.svg" alt="Chrome" width="16" height="16" style="margin-right:6px;">
+        Google Chrome
+      </li>
+      <li class="menu-item" onclick="openApp('paint')" style="display:flex; align-items:center;">
+        <img src="https://frutigeraeroarchive.org/images/sketchbook.png" alt="Paint" width="16" height="16" style="margin-right:6px;">
+        Paint
+      </li>
+      <li class="menu-item" onclick="openApp('mine')" style="display:flex; align-items:center;">
+        <img src="https://cdn2.steamgriddb.com/icon/1e14bfe2714193e7af5abc64ecbd6b46/32/256x256.png" alt="Minesweeper" width="16" height="16" style="margin-right:6px;">
+        Minesweeper
+      </li>
+      <li class="menu-item" onclick="openApp('notepad')" style="display:flex; align-items:center;">
+        <img src="https://images.icon-icons.com/191/PNG/256/Notepad_23093.png" alt="Notepad" width="16" height="16" style="margin-right:6px;">
+        Notepad
+      </li>
+      <li class="menu-item" onclick="openApp('wmp')" style="display:flex; align-items:center;">
+        <img src="https://www.clipartmax.com/png/middle/15-159149_windows-windows-media-player-logo.png" alt="WMP" width="16" height="16" style="margin-right:6px;">
+        Windows Media Player
+      </li>
+      <li class="menu-item" onclick="openApp('installer')" style="display:flex; align-items:center;">
+        <img src="https://images.icon-icons.com/54/PNG/256/installation_application_software_10810.png" alt="Installer" width="16" height="16" style="margin-right:6px;">
+        Web App Installer
+      </li>
+      <li class="menu-item" onclick="openApp('diary')" style="display:flex; align-items:center;">
+        <img src="https://icons.veryicon.com/png/System/Vistoon/EXE%20file.png" alt="Diary" width="16" height="16" style="margin-right:6px;">
+        Diary
+      </li>
+      <li class="menu-item" onclick="openApp('control')" style="display:flex; align-items:center;">
+        <img src="https://www.pngkey.com/png/full/336-3368717_admindashboard-windows-control-panel-icon.png" alt="Control Panel" width="16" height="16" style="margin-right:6px;">
+        Control Panel
+      </li>
+    <li class="menu-item" onclick="openApp('versions')">
+  <img src="icons.veryicon.com/png/System/Vistoon/EXE%20file.png" width="16" height="16" style="margin-right:6px;">
+  Versions
+</li>
+    </menu>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div id="taskbar">
+  <div id="start-orb"></div>
+  <div id="taskbar-menu">
+    <button onclick="restartSimulator()">Restart</button>
+    <button onclick="shutdownSimulator()">Shutdown</button>
+  </div>
+  <div id="taskbar-clock">00:00:00 AM</div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let z = 1;
+  window.ms = new Set();
+  window.pc = "#000";
+
+  const startOrb = document.getElementById("start-orb");
+  const startMenu = document.getElementById("start-menu");
+  const clockEl = document.getElementById("taskbar-clock");
+  const menuEl = document.getElementById("taskbar-menu");
+  const userIcon = document.getElementById("user-icon");
+
+  startOrb.onclick = () => {
+    startMenu.style.display = startMenu.style.display === "block" ? "none" : "block";
+    if (startMenu.style.display === "block") z++;
+    startMenu.style.zIndex = z;
+  };
+
+  clockEl.onclick = () => {
+    menuEl.style.display = menuEl.style.display === "flex" ? "none" : "flex";
+    if (menuEl.style.display === "flex") z++;
+    menuEl.style.zIndex = z;
+  };
+
+  userIcon.onclick = () => alert("User: Administrator");
+
+  function updateClock() {
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+    const ampm = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+    clockEl.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')} ${ampm}`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  function resetSimulator() {
+    document.querySelectorAll(".window").forEach(w => w.remove());
+    if (startMenu) startMenu.style.display = "none";
+    if (menuEl) menuEl.style.display = "none";
+    window.ms = new Set();
+    window.pc = "#000";
+    document.body.style.background = "url('https://4kwallpapers.com/images/walls/thumbs_3t/13944.jpg') center/cover";
+    z = 1;
+  }
+
+  window.restartSimulator = () => resetSimulator();
+  window.shutdownSimulator = () => {
+    const overlay = document.createElement("div");
+    overlay.id = "shutdown-overlay";
+    document.body.appendChild(overlay);
+  };
+
+  function makeDraggable(win) {
+    const titleBar = win.querySelector(".title-bar");
+    if (!titleBar) return;
+    let offsetX = 0, offsetY = 0, dragging = false;
+    titleBar.style.cursor = "move";
+    titleBar.addEventListener("mousedown", e => {
+      dragging = true;
+      const rect = win.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      z++;
+      win.style.zIndex = z;
+    });
+    document.addEventListener("mousemove", e => {
+      if (!dragging) return;
+      win.style.left = e.clientX - offsetX + "px";
+      win.style.top = e.clientY - offsetY + "px";
+    });
+    document.addEventListener("mouseup", () => dragging = false);
+  }
+
+  window.createWindow = (title, body) => {
+    const w = document.createElement("div");
+    w.className = "window active";
+    w.style.width = "500px";
+    w.style.height = "350px";
+    w.style.left = (60 + Math.random()*100) + "px";
+    w.style.top = (60 + Math.random()*60) + "px";
+    w.style.zIndex = z++;
+    w.innerHTML = `<div class="title-bar">
+      <div class="title-bar-text">${title}</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" onclick="minimize(this)"></button>
+        <button aria-label="Maximize" onclick="maximize(this)"></button>
+        <button aria-label="Close" onclick="closeW(this)"></button>
+      </div>
+    </div>
+    <div class="window-body">${body}</div>`;
+    document.getElementById("desktop").appendChild(w);
+    w.addEventListener("mousedown", () => {
+      document.querySelectorAll(".window").forEach(win => win.classList.remove("active"));
+      w.classList.add("active");
+      z++;
+      w.style.zIndex = z;
+    });
+    makeDraggable(w);
+  };
+
+  window.closeW = b => b.closest(".window").remove();
+  window.minimize = b => b.closest(".window").style.display = "none";
+  window.maximize = b => {
+    const w = b.closest(".window");
+    if (!w.dataset.m) {
+      w.dataset.m = "1";
+      w.dataset.old = JSON.stringify({ w:w.style.width, h:w.style.height, t:w.style.top, l:w.style.left });
+      w.style.width = "100%"; w.style.height = "calc(100% - 40px)"; w.style.top="0"; w.style.left="0";
+    } else {
+      const o = JSON.parse(w.dataset.old);
+      w.style.width=o.w; w.style.height=o.h; w.style.top=o.t; w.style.left=o.l; w.dataset.m="";
+    }
+  };
+
+  // -----------------------
+  // Apps with tabs
+  // -----------------------
+  window.openApp = (a) => {
+    if(a==="ie" || a==="chrome"){
+      const isChrome = a==="chrome";
+      const appName = isChrome ? "Google Chrome" : "Internet Explorer 10";
+      const icon = isChrome 
+        ? "https://upload.wikimedia.org/wikipedia/commons/0/0e/Google_Chrome_icon_%28March_2011%29.svg" 
+        : "https://img.apponic.com/113/198/0d27a46dc4aabe1b3c4a90fb05883e04.png";
+      createWindow(appName, `
+        <div style="display:flex;flex-direction:column;height:100%">
+          <div id="${a}tabs" style="display:flex;align-items:center;background:#eee;border-bottom:1px solid #ccc;padding:4px;gap:4px;">
+            <div class="tab active" style="padding:4px 8px; border:1px solid #ccc; border-radius:4px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+              <img src="${icon}" width="16" height="16">
+              <span>New Tab</span>
+              <button onclick="closeTab(this,'${a}')">✕</button>
+            </div>
+            <button onclick="newTab('${a}')" style="margin-left:auto; cursor:pointer;">+</button>
+          </div>
+          <div style="display:flex;gap:6px;padding:6px;background:#fff;border-bottom:1px solid #ccc;">
+            <button onclick="${a}Go(currentTab('${a}').url)">Go</button>
+            <input id="${a}bar" style="flex:1" value="https://www.google.com/webhp?igu=1&safe=active&ssui=on&zx=1777071854419">
+          </div>
+          <div id="${a}frames" style="flex:1;position:relative;">
+            <iframe class="${a}frame" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"></iframe>
+          </div>
+        </div>
+      `);
+
+      window[`${a}Tabs`] = [{ title:"New Tab", url:"https://www.google.com/webhp?igu=1&safe=active&ssui=on&zx=1777071854419" }];
+
+      window.currentTab = (app) => window[`${app}Tabs`][Array.from(document.getElementById(app+"tabs").children).findIndex(c=>c.classList.contains("active"))];
+
+      window[`${a}Go`] = (url) => {
+        const f = document.getElementById(a+"frames").querySelector("iframe");
+        if(!f) return;
+        f.src = url;
+        const bar = document.getElementById(a+"bar");
+        if(bar) bar.value = url;
+        currentTab(a).url = url;
+      };
+
+      window.newTab = (app) => {
+        const tabsEl = document.getElementById(app+"tabs");
+        const div = document.createElement("div");
+        const iconUrl = app==="chrome" 
+          ? "https://upload.wikimedia.org/wikipedia/commons/0/0e/Google_Chrome_icon_%28March_2011%29.svg"
+          : "https://img.apponic.com/113/198/0d27a46dc4aabe1b3c4a90fb05883e04.png";
+        div.className = "tab active";
+        div.style.cssText = "padding:4px 8px; border:1px solid #ccc; border-radius:4px; display:flex; align-items:center; gap:4px; cursor:pointer;";
+        div.innerHTML = `<img src="${iconUrl}" width="16" height="16"><span>New Tab</span><button onclick="closeTab(this,'${app}')">✕</button>`;
+        div.onclick = () => switchTab(div, app);
+        tabsEl.insertBefore(div, tabsEl.lastElementChild);
+        window[`${app}Tabs`].push({ title:"New Tab", url:"https://www.google.com" });
+        switchTab(div, app);
+      };
+
+      window.switchTab = (tab, app) => {
+        Array.from(document.getElementById(app+"tabs").children).forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        window[`${app}Go`](currentTab(app).url);
+      };
+
+      window.closeTab = (btn, app) => {
+        const tab = btn.parentElement;
+        const idx = Array.from(document.getElementById(app+"tabs").children).indexOf(tab);
+        window[`${app}Tabs`].splice(idx,1);
+        tab.remove();
+        const newActive = document.getElementById(app+"tabs").querySelector(".tab");
+        if(newActive) switchTab(newActive, app);
+      };
+    }
+    if(a==="paint") createWindow("Paint","<p>Paint app placeholder</p>");
+    if(a==="mine") createWindow("Minesweeper","<p>Minesweeper placeholder</p>");
+    if(a==="notepad") createWindow("Notepad","<p>Notepad placeholder</p>");
+    if(a==="wmp") createWindow("Windows Media Player","<p>WMP placeholder</p>");
+    if(a==="installer") createWindow("Web App Installer","<p>Installer placeholder</p>");
+    if(a==="diary") createWindow("Diary","<p>Diary placeholder</p>");
+    if(a==="control") createWindow("Control Panel","<p>Control Panel placeholder</p>");
+  };
+});
+</script>
+</body>
+</html>
