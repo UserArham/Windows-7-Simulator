@@ -13,9 +13,12 @@ Experience the nostalgia of Windows 7 right in your web browser! This simulator 
 
 ---
 
-## Demo
-Try the simulator online:  
-[Live Demo](https://windows-7-simulator.vercel.app/)*
+## Try the simulator online: [Live Demo](https://windows-7-simulator.vercel.app/)
+<img width="1365" height="762" alt="image" src="https://github.com/user-attachments/assets/45a5f4fa-b8c1-4310-90ea-13b804372acd" />
+
+<img width="1365" height="762" alt="image" src="https://github.com/user-attachments/assets/15358963-efbf-49bc-91ee-0fd4b8ca1cdf" />
+
+<img width="1365" height="762" alt="image" src="https://github.com/user-attachments/assets/66fb93db-baa6-4fca-9462-850dfef15b5e" />
 
 ---
 
