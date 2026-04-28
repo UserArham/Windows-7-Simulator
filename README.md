@@ -55,6 +55,9 @@ See the license file for details.
 - Add drag-and-drop file support  
 - Theme switcher for Aero Glass effects
 
+## Why it said Version 4?
+Note: I pre-released it at a HTML editor like [LiveCodes](livecodes.io) because Livecodes made it much easier to use and it is also better if you do not want storage-drinking editors such as Github. I made Version 1 at January 8, 2026 with 4 moderators because all of them were too sick to enter. I even used my favorite: 7.css. 7.css made that Windows 7 structure easier!
+
 ## Badges/Licenses
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/css-%23663399.svg?style=for-the-badge&logo=css&logoColor=white)
