@@ -13,7 +13,7 @@ Experience the nostalgia of Windows 7 right in your web browser! This simulator 
 
 ---
 
-## Try the simulator online: [Live Demo](https://windows-7-simulator.vercel.app/)
+## Try the simulator online: [Live Demo](https://userarham.github.io/Windows-7-Simulator/)
 <img width="1365" height="762" alt="image" src="https://github.com/user-attachments/assets/45a5f4fa-b8c1-4310-90ea-13b804372acd" />
 
 <img width="1365" height="762" alt="image" src="https://github.com/user-attachments/assets/15358963-efbf-49bc-91ee-0fd4b8ca1cdf" />
@@ -59,7 +59,7 @@ See the license file for details.
 - Theme switcher for Aero Glass effects
 
 ## Why it said Version 4?
-Note: I pre-released it at a HTML editor like [LiveCodes](livecodes.io) because Livecodes made it much easier to use and it is also better if you do not want storage-drinking editors such as Github. I made Version 1 at January 8, 2026 with 4 moderators because all of them were too sick to enter. I even used my favorite: 7.css. 7.css made that Windows 7 structure easier!
+Note: I pre-released it at a HTML editor like [LiveCodes](livecodes.io) because LiveCodes made it much easier to use and it is also better if you do not want storage-drinking editors such as Github. I made Version 1 at January 8, 2026 with 4 moderators because all of them were too sick to enter. I even used my favorite: 7.css. 7.css made that Windows 7 structure easier!
 
 ## Badges/Licenses
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
