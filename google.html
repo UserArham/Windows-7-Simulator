@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Google</title>
+<style>
+  body { margin:0; background:white; font-family:Arial, Helvetica, sans-serif; }
+  /* Top navigation */
+  .top { position:absolute; top:5px; left:15px; right:15px; font-size:13px; }
+  .top a { color:#00c; text-decoration:none; margin-right:12px; }
+  .top a:hover { text-decoration:underline; }
+  .top .right { float:right; }
+  .top .right a { margin-left:15px; margin-right:0; }
+  /* Main Google area */
+  .center { text-align:center; margin-top:120px; }
+  .logo { width:275px; }
+  .searchbox { width:520px; height:30px; margin-top:10px; border:1px solid #999; padding:2px 8px; font-size:16px; }
+  .buttons { margin-top:20px; }
+  .buttons input { padding:5px 14px; font-size:13px; }
+  /* Footer */
+  .footer { position:fixed; bottom:25px; width:100%; text-align:center; font-size:13px; }
+  .footer a { color:#00c; text-decoration:none; margin:0 10px; }
+</style>
+</head>
+<body>
+
+<!-- Top links -->
+<div class="top">
+  <a href="https://www.google.com/"> Search </a>
+  <a href="https://images.google.com/"> Images </a>
+  <a href="https://maps.google.com/"> Maps </a>
+  <a href="https://play.google.com/"> Play </a>
+  <a href="https://www.youtube.com/"> YouTube </a>
+  <a href="https://news.google.com/"> News </a>
+  <a href="https://photos.google.com/"> Photos </a>
+  <a href="https://sheets.google.com/"> Sheets </a>
+  <a href="https://slides.google.com/"> Slides </a>
+  <a href="https://docs.google.com/"> Docs </a>
+  <div class="right">
+    <a href="https://www.google.com/preferences"> Search settings </a>
+  </div>
+</div>
+
+<!-- Google homepage -->
+<div class="center">
+  <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Google_logo_%282010-2013%29.svg/1280px-Google_logo_%282010-2013%29.svg.png" alt="Google">
+ <form action="https://www.google.com/search?igu=1" method="GET">
+  <input class="searchbox" type="text" name="q" autocomplete="off" autofocus>
+  
+  <div class="buttons">
+    <input type="submit" value="Google Search">
+    <input type="submit" name="btnI" value="I'm Feeling Lucky">
+  </div>
+</form>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <a href="about:blank"> Advertising Programs </a>
+  <a href="about:blank"> Business Solutions </a>
+  <a href="about.google"> About Google </a>
+</div>
+
+</body>
+</html>
